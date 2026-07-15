@@ -30,6 +30,8 @@ The tests cover server rendering, FLAC STREAMINFO parsing, Vorbis comment and
 PICTURE writing, preservation of existing unrelated tags and audio-frame bytes,
 and the store-only album ZIP writer.
 
+Album ZIPs use the store method because FLAC audio is already compressed.
+
 ## Privacy and Discogs
 
 - FLAC files and uploaded cover artwork stay in the browser.
