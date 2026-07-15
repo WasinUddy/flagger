@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { headers } from "next/headers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,38 +12,34 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  const requestHeaders = await headers();
-  const host =
-    requestHeaders.get("x-forwarded-host") ??
-    requestHeaders.get("host") ??
-    "localhost:3000";
-  const protocol =
-    requestHeaders.get("x-forwarded-proto") ??
-    (host.startsWith("localhost") ? "http" : "https");
-  const metadataBase = new URL(`${protocol}://${host}`);
-  const title = "Flagger — FLAC + Tagger for Vinyl Rips";
-  const description =
-    "Match vinyl rips to Discogs metadata, embed your own cover, and export DAP-ready FLAC files entirely in your browser.";
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  "https://wasinuddy.github.io/flagger"
+).replace(/\/$/, "");
+const title = "Flagger — FLAC + Tagger for Vinyl Rips";
+const description =
+  "Match vinyl rips to Discogs metadata, embed your own cover, and export DAP-ready FLAC files entirely in your browser.";
+const socialImage = `${siteUrl}/og.png`;
 
-  return {
-    metadataBase,
+export const metadata: Metadata = {
+  metadataBase: new URL(`${siteUrl}/`),
+  title,
+  description,
+  alternates: { canonical: siteUrl },
+  openGraph: {
+    url: siteUrl,
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      images: [{ url: "/og.png", width: 1730, height: 907, alt: "Flagger — files stay local" }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: ["/og.png"],
-    },
-  };
-}
+    type: "website",
+    images: [{ url: socialImage, width: 1730, height: 907, alt: "Flagger — files stay local" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [socialImage],
+  },
+};
 
 export default function RootLayout({
   children,

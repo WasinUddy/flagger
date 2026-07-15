@@ -35,7 +35,10 @@ test("server-renders the complete Flagger product", async () => {
   assert.match(html, /Add your FLACs \+ cover/);
   assert.match(html, /Files stay on this device/);
   assert.match(html, /Data provided by Discogs/);
-  assert.match(html, /property="og:image" content="http:\/\/localhost\/og\.png"/i);
+  assert.match(
+    html,
+    /property="og:image" content="https:\/\/wasinuddy\.github\.io\/flagger\/og\.png"/i,
+  );
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
 

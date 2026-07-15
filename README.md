@@ -5,6 +5,8 @@ Discogs catalog, lets the listener choose the exact pressing, maps local FLAC
 files to the release track list, embeds user-supplied artwork, and exports
 DAP-friendly files.
 
+Live site: [wasinuddy.github.io/flagger](https://wasinuddy.github.io/flagger/)
+
 The audio never leaves the browser. Flagger rewrites the native FLAC metadata
 prefix and joins it to the original audio-frame Blob slice, so the encoded audio
 bytes are not decoded or re-encoded.
