@@ -548,6 +548,7 @@ export default function FlaggerApp() {
             From needle drop
             <em>to a tidy library.</em>
           </h1>
+          <ScribbleUnderline />
           <p className="hero-lede">
             Find the exact Discogs pressing, line it up with your FLAC rips, add your
             own cover, and export device-ready files—without uploading your music.
@@ -560,6 +561,7 @@ export default function FlaggerApp() {
           </div>
         </div>
         <div className="record-stage" aria-hidden="true">
+          <RecordOrbitDoodle />
           <div className="record-shadow" />
           <div className="record-disc">
             <div className="record-groove groove-one" />
@@ -575,6 +577,8 @@ export default function FlaggerApp() {
         </div>
       </section>
 
+      <WaveformDivider />
+
       <nav className="workflow-nav" aria-label="Workflow steps">
         <a href="#catalog" className={release ? "complete" : "active"}>
           <span>01</span> Find pressing
@@ -589,9 +593,10 @@ export default function FlaggerApp() {
 
       <section className="workspace-section" id="catalog">
         <div className="section-heading">
-          <div>
+          <div className="heading-title">
             <p className="section-number">01 / CATALOG</p>
             <h2>Find the exact pressing</h2>
+            <SectionDoodle variant="search" />
           </div>
           <p>
             Search artist, album, catalog number, barcode, or paste a Discogs release
@@ -779,9 +784,10 @@ export default function FlaggerApp() {
 
       <section className="workspace-section files-section" id="files">
         <div className="section-heading">
-          <div>
+          <div className="heading-title">
             <p className="section-number">02 / LOCAL FILES</p>
             <h2>Add your FLACs + cover</h2>
+            <SectionDoodle variant="files" />
           </div>
           <p>Your files are opened locally. Nothing here is sent to Flagger or Discogs.</p>
         </div>
@@ -950,9 +956,10 @@ export default function FlaggerApp() {
 
       <section className="workspace-section match-section" id="match">
         <div className="section-heading">
-          <div>
+          <div className="heading-title">
             <p className="section-number">03 / TAG + EXPORT</p>
             <h2>Match the tracks</h2>
+            <SectionDoodle variant="match" />
           </div>
           <p>Confirm the order, make any corrections, then prepare the finished album.</p>
         </div>
@@ -1091,7 +1098,7 @@ export default function FlaggerApp() {
                         <strong>{item.file.name}</strong>
                         <small>{formatDuration(item.durationSeconds)}</small>
                       </div>
-                      <span className="mapping-arrow" aria-hidden="true">→</span>
+                      <PatchCableArrow />
                       <label className="track-select">
                         Discogs track
                         <select
@@ -1238,6 +1245,168 @@ export default function FlaggerApp() {
         <a href="#top">Back to top ↑</a>
       </footer>
     </main>
+  );
+}
+
+function ScribbleUnderline() {
+  return (
+    <svg
+      className="hand-doodle hero-underline"
+      viewBox="0 0 620 44"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        className="doodle-path"
+        pathLength={1}
+        d="M7 23 C86 8 155 33 235 19 C328 3 421 32 613 12"
+      />
+      <path
+        className="doodle-path doodle-echo"
+        pathLength={1}
+        d="M18 32 C116 20 178 38 265 27 C370 14 457 34 596 22"
+      />
+    </svg>
+  );
+}
+
+function RecordOrbitDoodle() {
+  return (
+    <svg
+      className="hand-doodle record-orbit-doodle"
+      viewBox="0 0 520 520"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        className="doodle-path"
+        pathLength={1}
+        d="M75 370 C18 279 45 139 151 72 C254 8 401 54 463 169 C521 276 472 414 359 467 C257 515 132 463 75 370 Z"
+      />
+      <path
+        className="doodle-path doodle-accent doodle-delay"
+        pathLength={1}
+        d="M31 192 C22 176 24 153 38 140 M24 153 L10 149 M25 153 L32 137 M449 429 C464 435 482 431 493 418 M480 430 L495 439 M480 430 L484 413"
+      />
+      <path
+        className="doodle-path doodle-delay-two"
+        pathLength={1}
+        d="M457 76 L465 55 L474 76 L496 84 L475 92 L467 114 L458 94 L437 85 Z"
+      />
+    </svg>
+  );
+}
+
+function WaveformDivider() {
+  return (
+    <div className="waveform-divider" aria-hidden="true">
+      <svg
+        className="hand-doodle"
+        viewBox="0 0 1440 80"
+        preserveAspectRatio="none"
+        focusable="false"
+      >
+        <path
+          className="doodle-path"
+          pathLength={1}
+          d="M0 44 C45 42 62 42 98 43 L132 43 L146 21 L160 66 L176 33 L193 53 L215 42 C267 40 308 43 355 43 L391 43 L405 9 L421 71 L438 26 L455 57 L476 43 C535 40 578 44 628 43 L665 43 L681 18 L697 64 L714 30 L731 55 L753 43 C812 40 856 44 910 43 L944 43 L959 11 L976 72 L994 27 L1011 58 L1032 43 C1092 40 1138 44 1190 43 L1226 43 L1241 22 L1257 64 L1273 33 L1290 53 L1312 43 C1358 41 1397 43 1440 42"
+        />
+        <path
+          className="doodle-path doodle-echo doodle-delay"
+          pathLength={1}
+          d="M0 51 C179 54 314 50 480 52 C641 54 802 49 978 52 C1130 55 1288 50 1440 52"
+        />
+      </svg>
+      <span>ANALOG IN · CLEAN TAGS OUT · AUDIO UNTOUCHED</span>
+    </div>
+  );
+}
+
+function SectionDoodle({ variant }: { variant: "search" | "files" | "match" }) {
+  if (variant === "search") {
+    return (
+      <svg
+        className="hand-doodle section-doodle"
+        viewBox="0 0 132 92"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path
+          className="doodle-path"
+          pathLength={1}
+          d="M18 38 C17 17 38 7 56 13 C76 20 80 43 67 57 C53 72 27 62 19 45 C12 30 23 15 38 11"
+        />
+        <path
+          className="doodle-path doodle-delay"
+          pathLength={1}
+          d="M66 57 C80 66 92 75 106 84 M95 75 L108 84 L103 69"
+        />
+      </svg>
+    );
+  }
+  if (variant === "files") {
+    return (
+      <svg
+        className="hand-doodle section-doodle"
+        viewBox="0 0 132 92"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path
+          className="doodle-path"
+          pathLength={1}
+          d="M20 25 C43 19 69 20 93 23 L96 67 C68 71 45 68 18 71 Z M27 17 C48 12 76 14 103 18 L105 58"
+        />
+        <path
+          className="doodle-path doodle-accent doodle-delay"
+          pathLength={1}
+          d="M31 48 C39 47 40 34 47 34 C55 35 54 58 62 57 C70 56 70 38 78 39 C84 40 86 50 94 49"
+        />
+      </svg>
+    );
+  }
+  return (
+    <svg
+      className="hand-doodle section-doodle"
+      viewBox="0 0 132 92"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        className="doodle-path"
+        pathLength={1}
+        d="M14 48 C28 49 37 48 48 49 M84 49 C96 49 106 49 119 47 M47 35 L63 50 L84 27 M48 39 L63 55 L87 31"
+      />
+      <path
+        className="doodle-path doodle-accent doodle-delay"
+        pathLength={1}
+        d="M24 27 L28 16 M17 31 L8 24 M101 67 L109 77 M108 62 L122 64"
+      />
+    </svg>
+  );
+}
+
+function PatchCableArrow() {
+  return (
+    <svg
+      className="hand-doodle mapping-arrow patch-cable"
+      viewBox="0 0 66 30"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <circle className="doodle-path" pathLength={1} cx="7" cy="15" r="4" />
+      <path
+        className="doodle-path doodle-accent doodle-delay"
+        pathLength={1}
+        d="M11 15 C22 2 37 28 51 14 C55 10 58 11 61 14"
+      />
+      <path
+        className="doodle-path doodle-delay-two"
+        pathLength={1}
+        d="M54 8 L62 14 L54 21"
+      />
+    </svg>
   );
 }
 

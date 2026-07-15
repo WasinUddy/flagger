@@ -31,6 +31,7 @@ body {
     radial-gradient(circle at 10% 5%, rgba(255, 255, 255, 0.45), transparent 22rem),
     var(--paper);
   color: var(--ink);
+  font-size: 17px;
   font-family: Arial, Helvetica, sans-serif;
   min-width: 320px;
 }
@@ -117,7 +118,7 @@ main {
 
 .brand small {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.2em;
   margin-top: 4px;
@@ -129,7 +130,7 @@ main {
   border-radius: 999px;
   display: flex;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   gap: 8px;
   letter-spacing: 0.08em;
@@ -138,6 +139,7 @@ main {
 }
 
 .local-pill span {
+  animation: status-pulse 2.4s ease-in-out infinite;
   background: var(--green);
   border-radius: 50%;
   box-shadow: 0 0 0 3px var(--green-pale);
@@ -175,9 +177,9 @@ main {
 .card-label,
 .selected-kicker {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
 }
 
@@ -215,7 +217,7 @@ main {
 }
 
 .hero-lede {
-  font-size: clamp(16px, 1.4vw, 21px);
+  font-size: clamp(18px, 1.5vw, 22px);
   line-height: 1.55;
   margin: 34px 0 0;
   max-width: 690px;
@@ -227,6 +229,11 @@ main {
   flex-wrap: wrap;
   gap: 22px;
   margin-top: 36px;
+}
+
+.hero-actions .primary-button span {
+  animation: arrow-bob 1.8s ease-in-out infinite;
+  display: inline-block;
 }
 
 .primary-button,
@@ -243,7 +250,7 @@ main {
   border: 1.5px solid var(--ink);
   box-shadow: 4px 4px 0 var(--ink);
   display: inline-flex;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
   gap: 28px;
   justify-content: center;
@@ -275,7 +282,7 @@ main {
   background: var(--cream);
   border: 1.5px solid var(--ink);
   box-shadow: 3px 3px 0 var(--ink);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.06em;
   padding: 12px 16px;
@@ -290,7 +297,7 @@ main {
   background: transparent;
   border: 1px solid var(--ink);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   padding: 9px 12px;
@@ -305,7 +312,7 @@ main {
 .text-button {
   background: transparent;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   padding: 8px 0;
@@ -317,9 +324,96 @@ main {
 .format-note {
   color: var(--muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.hand-doodle {
+  color: var(--ink);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.doodle-path {
+  animation: doodle-draw 1.15s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  fill: none;
+  stroke: currentColor;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.doodle-echo {
+  opacity: 0.38;
+  stroke-width: 1.5;
+}
+
+.doodle-accent {
+  color: var(--orange);
+}
+
+.doodle-delay {
+  animation-delay: 180ms;
+}
+
+.doodle-delay-two {
+  animation-delay: 340ms;
+}
+
+.hero-underline {
+  color: var(--orange);
+  display: block;
+  height: 36px;
+  margin: 2px 0 -10px;
+  max-width: 620px;
+  width: 78%;
+}
+
+.record-orbit-doodle {
+  animation: doodle-float 6s ease-in-out infinite;
+  inset: -3%;
+  position: absolute;
+  width: 106%;
+  z-index: 1;
+}
+
+.waveform-divider {
+  align-items: center;
+  background: var(--acid);
+  border-bottom: 1.5px solid var(--ink);
+  border-top: 1.5px solid var(--ink);
+  display: flex;
+  height: 78px;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.waveform-divider svg {
+  height: 100%;
+  inset: 0;
+  opacity: 0.72;
+  position: absolute;
+  width: 100%;
+}
+
+.waveform-divider span {
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 8px 13px;
+  position: relative;
+  text-align: center;
+  transform: rotate(-1deg);
+  z-index: 2;
 }
 
 .record-stage {
@@ -339,9 +433,11 @@ main {
   inset: 14% 6% 2% 18%;
   position: absolute;
   transform: translate(8%, 12%);
+  z-index: 0;
 }
 
 .record-disc {
+  animation: record-spin 32s linear infinite;
   background:
     repeating-radial-gradient(circle at 50%, transparent 0 7px, rgba(255, 255, 255, 0.05) 8px 9px),
     radial-gradient(circle at 42% 35%, #45443f 0, #171713 27%, #090908 64%, #24231f 100%);
@@ -351,6 +447,8 @@ main {
   inset: 6% 4% 5% 4%;
   position: absolute;
   transform: rotate(-11deg);
+  transform-origin: center;
+  z-index: 2;
 }
 
 .record-disc::after {
@@ -415,6 +513,7 @@ main {
 }
 
 .tonearm {
+  animation: needle-sway 5.5s ease-in-out infinite alternate;
   background: #9b9589;
   border: 2px solid var(--ink);
   border-radius: 20px;
@@ -454,11 +553,12 @@ main {
 }
 
 .stage-sticker {
+  animation: sticker-wobble 4.2s ease-in-out infinite alternate;
   background: var(--orange);
   border: 1.5px solid var(--ink);
   bottom: 7%;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.1em;
   padding: 10px 13px;
@@ -481,7 +581,7 @@ main {
   border-left: 1px solid rgba(255, 255, 255, 0.22);
   display: flex;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   gap: 13px;
   letter-spacing: 0.08em;
@@ -538,6 +638,20 @@ main {
   margin-bottom: 38px;
 }
 
+.heading-title {
+  position: relative;
+  width: fit-content;
+}
+
+.section-doodle {
+  animation: doodle-float 5s ease-in-out infinite;
+  color: var(--orange);
+  position: absolute;
+  right: -134px;
+  top: -13px;
+  width: 118px;
+}
+
 .section-number {
   color: var(--orange-dark);
   margin: 0 0 10px;
@@ -573,7 +687,7 @@ main {
   display: flex;
   flex-direction: column;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
   gap: 8px;
   letter-spacing: 0.12em;
@@ -639,7 +753,7 @@ a:focus-visible {
 .token-row p {
   color: var(--muted);
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   letter-spacing: 0;
   margin: 7px 0 0;
@@ -648,14 +762,14 @@ a:focus-visible {
 
 .token-row a {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   padding-bottom: 17px;
 }
 
 .status-message {
   border-left: 4px solid var(--ink);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.45;
   margin: 20px 0 0;
   padding: 10px 13px;
@@ -742,6 +856,7 @@ a:focus-visible {
 }
 
 .cover-fallback i {
+  animation: mini-record-spin 22s linear infinite;
   background: repeating-radial-gradient(circle, #12120f 0 5px, #2e2d27 6px 7px);
   border: 1px solid #060605;
   border-radius: 50%;
@@ -771,7 +886,7 @@ a:focus-visible {
 .release-copy strong {
   display: -webkit-box;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 17px;
+  font-size: 19px;
   line-height: 1.1;
   overflow: hidden;
   -webkit-box-orient: vertical;
@@ -782,7 +897,7 @@ a:focus-visible {
 .release-copy small {
   color: var(--muted);
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.35;
   margin-top: 8px;
   overflow: hidden;
@@ -793,7 +908,7 @@ a:focus-visible {
 .release-copy b {
   color: var(--orange-dark);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.07em;
   margin-top: auto;
   padding-top: 12px;
@@ -803,7 +918,7 @@ a:focus-visible {
 .discogs-credit {
   color: var(--muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
   margin: 10px 12px 0;
@@ -845,7 +960,7 @@ a:focus-visible {
 }
 
 .selected-artist {
-  font-size: 15px;
+  font-size: 17px;
   margin: 8px 0 14px;
 }
 
@@ -858,13 +973,13 @@ a:focus-visible {
 .release-facts span {
   border: 1px solid rgba(255, 255, 255, 0.35);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 11px;
   padding: 5px 7px;
 }
 
 .selected-note {
   color: #c8c3b7;
-  font-size: 11px;
+  font-size: 13px;
   margin: 13px 0 0;
 }
 
@@ -906,7 +1021,7 @@ a:focus-visible {
 .mini-status {
   color: var(--muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -935,7 +1050,7 @@ a:focus-visible {
   color: var(--acid);
   display: flex;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   height: 66px;
   justify-content: center;
@@ -963,7 +1078,7 @@ a:focus-visible {
 .cover-ready p,
 .locked-panel p {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 15px;
   line-height: 1.5;
   margin: 0 0 20px;
   max-width: 350px;
@@ -1019,7 +1134,7 @@ a:focus-visible {
   color: var(--ink);
   display: inline-block;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.1em;
   padding: 5px 7px;
@@ -1042,7 +1157,7 @@ a:focus-visible {
   background: var(--ink);
   color: var(--cream);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
   padding: 10px 14px;
@@ -1104,7 +1219,7 @@ a:focus-visible {
 }
 
 .file-name strong {
-  font-size: 13px;
+  font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1114,13 +1229,13 @@ a:focus-visible {
 .technical span,
 .file-error {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 5px;
 }
 
 .file-status {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1217,7 +1332,7 @@ a:focus-visible {
 
 .field-grid input {
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 400;
   letter-spacing: 0;
   min-width: 0;
@@ -1226,7 +1341,7 @@ a:focus-visible {
 
 .mapping-toolbar p {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   margin: 7px 0 0;
 }
 
@@ -1235,7 +1350,7 @@ a:focus-visible {
   border-top: 1px solid var(--line);
   display: grid;
   gap: 16px;
-  grid-template-columns: minmax(190px, 0.9fr) 24px minmax(220px, 1.25fr) minmax(180px, 1fr) 76px;
+  grid-template-columns: minmax(190px, 0.9fr) 58px minmax(220px, 1.25fr) minmax(180px, 1fr) 76px;
   padding: 18px 22px;
 }
 
@@ -1252,12 +1367,12 @@ a:focus-visible {
 .source-file span {
   color: var(--muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 0.1em;
 }
 
 .source-file strong {
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 7px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1272,13 +1387,14 @@ a:focus-visible {
 .mapping-arrow {
   align-self: center;
   color: var(--orange);
-  font-size: 25px;
+  height: 30px;
+  width: 58px;
 }
 
 .track-select select,
 .title-edit input {
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 400;
   letter-spacing: 0;
   min-height: 44px;
@@ -1313,7 +1429,7 @@ a:focus-visible {
 .track-meta span,
 .track-meta small {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 7px;
+  font-size: 10px;
   margin-top: 2px;
 }
 
@@ -1356,7 +1472,7 @@ a:focus-visible {
 
 .export-panel li {
   color: #aaa498;
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .export-panel li::before {
@@ -1408,7 +1524,7 @@ a:focus-visible {
 
 .export-count span {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1449,7 +1565,7 @@ a:focus-visible {
 
 .download-heading p {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
   margin: 0;
 }
 
@@ -1486,12 +1602,12 @@ a:focus-visible {
 }
 
 .download-list strong {
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .download-list small {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 12px;
   margin-top: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1501,7 +1617,7 @@ a:focus-visible {
 .download-list > div > b {
   color: var(--muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .download-list button {
@@ -1509,7 +1625,7 @@ a:focus-visible {
   border: 1px solid var(--ink);
   color: var(--cream);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
   padding: 10px 12px;
   text-transform: uppercase;
@@ -1539,12 +1655,13 @@ a:focus-visible {
 }
 
 .privacy-strip > p {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.6;
   margin: 0;
 }
 
 .privacy-record {
+  animation: mini-record-spin 36s linear infinite;
   align-items: center;
   aspect-ratio: 1;
   background: repeating-radial-gradient(circle, #171612 0 5px, #3a3832 6px 7px);
@@ -1578,7 +1695,7 @@ footer {
 
 footer p {
   color: #b8b2a7;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.55;
   margin: 0 auto;
   max-width: 680px;
@@ -1586,7 +1703,7 @@ footer p {
 
 footer > a {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1600,6 +1717,75 @@ footer > a {
   position: absolute;
   white-space: nowrap;
   width: 1px;
+}
+
+@keyframes doodle-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes doodle-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-0.5deg);
+  }
+  50% {
+    transform: translate3d(0, -5px, 0) rotate(0.8deg);
+  }
+}
+
+@keyframes record-spin {
+  from {
+    transform: rotate(-11deg);
+  }
+  to {
+    transform: rotate(349deg);
+  }
+}
+
+@keyframes mini-record-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes needle-sway {
+  from {
+    transform: rotate(22deg);
+  }
+  to {
+    transform: rotate(24.5deg);
+  }
+}
+
+@keyframes sticker-wobble {
+  from {
+    transform: rotate(-5deg) translateY(0);
+  }
+  to {
+    transform: rotate(-3deg) translateY(-3px);
+  }
+}
+
+@keyframes status-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px var(--green-pale);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(31, 97, 72, 0.12);
+  }
+}
+
+@keyframes arrow-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
 }
 
 @media (max-width: 1120px) {
@@ -1627,7 +1813,11 @@ footer > a {
   }
 
   .mapping-row {
-    grid-template-columns: minmax(170px, 0.8fr) 18px minmax(210px, 1.2fr) minmax(160px, 0.9fr) 70px;
+    grid-template-columns: minmax(170px, 0.8fr) 48px minmax(210px, 1.2fr) minmax(160px, 0.9fr) 70px;
+  }
+
+  .mapping-arrow {
+    width: 48px;
   }
 }
 
@@ -1669,6 +1859,11 @@ footer > a {
     gap: 18px;
   }
 
+  .section-doodle {
+    right: -104px;
+    width: 92px;
+  }
+
   .upload-grid {
     grid-template-columns: 1fr;
   }
@@ -1703,7 +1898,7 @@ footer > a {
 
   .mapping-row {
     align-items: start;
-    grid-template-columns: minmax(0, 1fr) 25px minmax(0, 1.3fr) 65px;
+    grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1.3fr) 65px;
   }
 
   .title-edit {
@@ -1742,6 +1937,15 @@ footer > a {
 }
 
 @media (max-width: 600px) {
+  body {
+    font-size: 16px;
+  }
+
+  input,
+  select {
+    font-size: 16px !important;
+  }
+
   .topbar {
     padding: 12px 17px;
   }
@@ -1772,7 +1976,13 @@ footer > a {
   }
 
   .hero-lede {
-    font-size: 15px;
+    font-size: 17px;
+  }
+
+  .hero-underline {
+    height: 29px;
+    margin-bottom: -5px;
+    width: 96%;
   }
 
   .hero-actions {
@@ -1807,6 +2017,24 @@ footer > a {
   .section-heading h2,
   .privacy-strip h2 {
     font-size: 42px;
+  }
+
+  .section-doodle {
+    opacity: 0.85;
+    right: -24px;
+    top: -54px;
+    width: 76px;
+  }
+
+  .waveform-divider {
+    height: 70px;
+  }
+
+  .waveform-divider span {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    margin: 0 14px;
+    padding: 7px 9px;
   }
 
   .search-panel {
@@ -1957,5 +2185,22 @@ footer > a {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .doodle-path {
+    animation: none !important;
+    stroke-dashoffset: 0;
+  }
+
+  .record-disc,
+  .tonearm,
+  .stage-sticker,
+  .record-orbit-doodle,
+  .section-doodle,
+  .local-pill span,
+  .hero-actions .primary-button span,
+  .cover-fallback i,
+  .privacy-record {
+    animation: none !important;
   }
 }
