@@ -1300,11 +1300,12 @@ function RecordOrbitDoodle() {
 
 function WaveformDivider() {
   return (
-    <div className="waveform-divider" aria-hidden="true">
+    <div className="waveform-divider">
       <svg
         className="hand-doodle"
         viewBox="0 0 1440 80"
         preserveAspectRatio="none"
+        aria-hidden="true"
         focusable="false"
       >
         <path

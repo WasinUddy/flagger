@@ -139,7 +139,7 @@ main {
 }
 
 .local-pill span {
-  animation: status-pulse 2.4s ease-in-out infinite;
+  animation: status-pulse 2.2s ease-in-out 2;
   background: var(--green);
   border-radius: 50%;
   box-shadow: 0 0 0 3px var(--green-pale);
@@ -232,7 +232,7 @@ main {
 }
 
 .hero-actions .primary-button span {
-  animation: arrow-bob 1.8s ease-in-out infinite;
+  animation: arrow-bob 1.8s ease-in-out 2;
   display: inline-block;
 }
 
@@ -374,7 +374,7 @@ main {
 }
 
 .record-orbit-doodle {
-  animation: doodle-float 6s ease-in-out infinite;
+  animation: doodle-float 4.6s ease-in-out 1;
   inset: -3%;
   position: absolute;
   width: 106%;
@@ -437,7 +437,7 @@ main {
 }
 
 .record-disc {
-  animation: record-spin 32s linear infinite;
+  animation: record-spin 4.8s ease-out 1;
   background:
     repeating-radial-gradient(circle at 50%, transparent 0 7px, rgba(255, 255, 255, 0.05) 8px 9px),
     radial-gradient(circle at 42% 35%, #45443f 0, #171713 27%, #090908 64%, #24231f 100%);
@@ -513,7 +513,7 @@ main {
 }
 
 .tonearm {
-  animation: needle-sway 5.5s ease-in-out infinite alternate;
+  animation: needle-sway 4.4s ease-in-out 1 alternate;
   background: #9b9589;
   border: 2px solid var(--ink);
   border-radius: 20px;
@@ -553,7 +553,7 @@ main {
 }
 
 .stage-sticker {
-  animation: sticker-wobble 4.2s ease-in-out infinite alternate;
+  animation: sticker-wobble 4.2s ease-in-out 1 alternate;
   background: var(--orange);
   border: 1.5px solid var(--ink);
   bottom: 7%;
@@ -644,7 +644,7 @@ main {
 }
 
 .section-doodle {
-  animation: doodle-float 5s ease-in-out infinite;
+  animation: doodle-float 4.4s ease-in-out 1;
   color: var(--orange);
   position: absolute;
   right: -134px;
@@ -856,7 +856,6 @@ a:focus-visible {
 }
 
 .cover-fallback i {
-  animation: mini-record-spin 22s linear infinite;
   background: repeating-radial-gradient(circle, #12120f 0 5px, #2e2d27 6px 7px);
   border: 1px solid #060605;
   border-radius: 50%;
@@ -1661,7 +1660,7 @@ a:focus-visible {
 }
 
 .privacy-record {
-  animation: mini-record-spin 36s linear infinite;
+  animation: mini-record-spin 4.8s ease-out 1;
   align-items: center;
   aspect-ratio: 1;
   background: repeating-radial-gradient(circle, #171612 0 5px, #3a3832 6px 7px);
@@ -1677,6 +1676,27 @@ a:focus-visible {
   border-radius: 50%;
   height: 34%;
   width: 34%;
+}
+
+@media (hover: hover) {
+  .record-stage:hover .record-disc {
+    animation: record-spin 16s linear infinite;
+  }
+
+  .record-stage:hover .tonearm {
+    animation: needle-sway 3.6s ease-in-out infinite alternate;
+  }
+
+  .record-stage:hover .stage-sticker,
+  .section-heading:hover .section-doodle,
+  .privacy-strip:hover .privacy-record {
+    animation: doodle-float 4s ease-in-out infinite;
+  }
+
+  .privacy-strip:hover .privacy-record {
+    animation-name: mini-record-spin;
+    animation-timing-function: linear;
+  }
 }
 
 footer {
