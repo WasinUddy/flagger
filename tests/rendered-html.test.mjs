@@ -35,6 +35,7 @@ test("server-renders the complete Flagger product", async () => {
   assert.match(html, /Add files and cover/);
   assert.match(html, /Local processing/);
   assert.match(html, /Audio is not re-encoded/);
+  assert.match(html, /spinning-disc/);
   assert.match(html, /Data provided by Discogs/);
   assert.match(
     html,

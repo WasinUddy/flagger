@@ -565,6 +565,11 @@ export default function FlaggerApp() {
           </p>
           <p className="format-note">Runs in your browser · Audio is not re-encoded</p>
         </div>
+        <div className="record-visual" aria-hidden="true">
+          <div className="spinning-disc">
+            <span className="spinning-disc-label">F</span>
+          </div>
+        </div>
       </section>
 
       <nav className="workflow-nav" aria-label="Workflow steps">

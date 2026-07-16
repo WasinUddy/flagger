@@ -140,6 +140,10 @@ main {
 }
 
 .hero {
+  align-items: center;
+  display: grid;
+  gap: 48px;
+  grid-template-columns: minmax(0, 1fr) 184px;
   margin: 0 auto;
   max-width: 1120px;
   padding: 46px 0 34px;
@@ -175,6 +179,59 @@ main {
   font-family: var(--font-geist-mono), monospace;
   font-size: 14px;
   margin: 14px 0 0;
+}
+
+.record-visual {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.spinning-disc {
+  animation: record-spin 9s linear infinite;
+  background:
+    radial-gradient(circle, transparent 0 7px, var(--orange) 8px 34px, transparent 35px),
+    repeating-radial-gradient(circle, #292621 0 3px, #171511 4px 7px);
+  border: 1px solid #0d0c0a;
+  border-radius: 50%;
+  height: 164px;
+  position: relative;
+  width: 164px;
+}
+
+.spinning-disc-label {
+  align-items: center;
+  background: var(--orange);
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  display: flex;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 700;
+  height: 54px;
+  justify-content: center;
+  left: 54px;
+  position: absolute;
+  top: 54px;
+  width: 54px;
+}
+
+.spinning-disc-label::after {
+  background: var(--surface);
+  border-radius: 50%;
+  content: "";
+  height: 5px;
+  left: 24px;
+  position: absolute;
+  top: 7px;
+  width: 5px;
+}
+
+@keyframes record-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .workflow-nav {
@@ -1370,6 +1427,8 @@ footer > a {
 
   .hero {
     padding-block: 32px 26px;
+    gap: 16px;
+    grid-template-columns: minmax(0, 1fr) 98px;
   }
 
   .hero h1 {
@@ -1383,6 +1442,26 @@ footer > a {
 
   .format-note {
     font-size: 13px;
+  }
+
+  .spinning-disc {
+    height: 90px;
+    width: 90px;
+  }
+
+  .spinning-disc-label {
+    font-size: 15px;
+    height: 32px;
+    left: 28px;
+    top: 28px;
+    width: 32px;
+  }
+
+  .spinning-disc-label::after {
+    height: 4px;
+    left: 13px;
+    top: 4px;
+    width: 4px;
   }
 
   .workflow-nav a {
@@ -1566,5 +1645,9 @@ footer > a {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .spinning-disc {
+    animation: none;
   }
 }
