@@ -19,7 +19,7 @@ const siteUrl = (
 const title = "Flagger — FLAC + Tagger for Vinyl Rips";
 const description =
   "Match vinyl rips to Discogs metadata, embed your own cover, and export DAP-ready FLAC files entirely in your browser.";
-const socialImage = `${siteUrl}/og.png`;
+const socialImage = `${siteUrl}/og-simple.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(`${siteUrl}/`),
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     title,
     description,
     type: "website",
-    images: [{ url: socialImage, width: 1730, height: 907, alt: "Flagger — files stay local" }],
+    images: [{ url: socialImage, width: 1731, height: 909, alt: "Flagger — tag your FLAC files" }],
   },
   twitter: {
     card: "summary_large_image",

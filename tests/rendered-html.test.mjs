@@ -30,14 +30,15 @@ test("server-renders the complete Flagger product", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>Flagger — FLAC \+ Tagger for Vinyl Rips<\/title>/i);
-  assert.match(html, /From needle drop/);
-  assert.match(html, /Find the exact pressing/);
-  assert.match(html, /Add your FLACs \+ cover/);
-  assert.match(html, /Files stay on this device/);
+  assert.match(html, /Tag your FLAC files/);
+  assert.match(html, /Choose a Discogs release/);
+  assert.match(html, /Add files and cover/);
+  assert.match(html, /Local processing/);
+  assert.match(html, /Audio is not re-encoded/);
   assert.match(html, /Data provided by Discogs/);
   assert.match(
     html,
-    /property="og:image" content="https:\/\/wasinuddy\.github\.io\/flagger\/og\.png"/i,
+    /property="og:image" content="https:\/\/wasinuddy\.github\.io\/flagger\/og-simple\.png"/i,
   );
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
@@ -50,7 +51,7 @@ test("removes disposable starter infrastructure", async () => {
   ]);
 
   assert.match(page, /<FlaggerApp \/>/);
-  assert.match(layout, /\/og\.png/);
+  assert.match(layout, /\/og-simple\.png/);
   assert.doesNotMatch(page, /_sites-preview|codex-preview/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await assert.rejects(access(new URL("../app/_sites-preview", import.meta.url)));

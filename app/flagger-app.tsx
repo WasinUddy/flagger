@@ -179,6 +179,8 @@ export default function FlaggerApp() {
   const assignmentsComplete =
     readyFiles.length > 0 && assignedTracks.length === readyFiles.length;
   const assignmentsUnique = new Set(assignedTracks).size === assignedTracks.length;
+  const filesStepComplete = readyFiles.length > 0 && Boolean(cover);
+  const currentStep = !release ? 1 : !filesStepComplete ? 2 : 3;
   const canExport = Boolean(
     release &&
       cover &&
@@ -253,8 +255,12 @@ export default function FlaggerApp() {
       setSearchState("done");
       setSearchMessage("Pressing selected. Add your FLAC files and sleeve artwork next.");
       window.setTimeout(() => {
-        document.getElementById("files")?.scrollIntoView({
-          behavior: "smooth",
+        const heading = document.getElementById("files-heading");
+        heading?.focus({ preventScroll: true });
+        heading?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "auto"
+            : "smooth",
           block: "start",
         });
       }, 80);
@@ -546,75 +552,62 @@ export default function FlaggerApp() {
         </a>
         <div className="local-pill">
           <span aria-hidden="true" />
-          Files stay on this device
+          Local processing
         </div>
       </header>
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow">VINYL RIP WORKBENCH / 01</p>
-          <h1>
-            From needle drop
-            <em>to a tidy library.</em>
-          </h1>
-          <ScribbleUnderline />
+          <h1>Tag your FLAC files</h1>
           <p className="hero-lede">
-            Find the exact Discogs pressing, line it up with your FLAC rips, add your
-            own cover, and export device-ready files—without uploading your music.
+            Match a Discogs release, add your cover, review the track order, and
+            download tagged files.
           </p>
-          <div className="hero-actions">
-            <a className="primary-button" href="#catalog">
-              Find your pressing <span aria-hidden="true">↓</span>
-            </a>
-            <span className="format-note">Native FLAC · JPEG / PNG · No re-encode</span>
-          </div>
-        </div>
-        <div className="record-stage" aria-hidden="true">
-          <RecordOrbitDoodle />
-          <div className="record-shadow" />
-          <div className="record-disc">
-            <div className="record-groove groove-one" />
-            <div className="record-groove groove-two" />
-            <div className="record-label">
-              <span>FLAGGER</span>
-              <strong>LOCAL</strong>
-              <small>96 / 24</small>
-            </div>
-          </div>
-          <div className="tonearm" />
-          <div className="stage-sticker">AUDIO UNTOUCHED</div>
+          <p className="format-note">Runs in your browser · Audio is not re-encoded</p>
         </div>
       </section>
 
-      <WaveformDivider />
-
       <nav className="workflow-nav" aria-label="Workflow steps">
-        <a href="#catalog" className={release ? "complete" : "active"}>
-          <span>01</span> Find pressing
+        <a
+          href="#catalog"
+          className={`${release ? "complete" : ""} ${currentStep === 1 ? "active" : ""}`.trim()}
+          aria-current={currentStep === 1 ? "step" : undefined}
+        >
+          <span>1</span> Release
         </a>
-        <a href="#files" className={readyFiles.length ? "complete" : ""}>
-          <span>02</span> Add files + cover
+        <a
+          href="#files"
+          className={`${filesStepComplete ? "complete" : ""} ${currentStep === 2 ? "active" : ""}`.trim()}
+          aria-current={currentStep === 2 ? "step" : undefined}
+        >
+          <span>2</span> Files &amp; cover
         </a>
-        <a href="#match" className={outputs.length ? "complete" : ""}>
-          <span>03</span> Match + export
+        <a
+          href="#match"
+          className={`${outputs.length ? "complete" : ""} ${currentStep === 3 ? "active" : ""}`.trim()}
+          aria-current={currentStep === 3 ? "step" : undefined}
+        >
+          <span>3</span> Review &amp; download
         </a>
       </nav>
 
       <section className="workspace-section" id="catalog">
         <div className="section-heading">
           <div className="heading-title">
-            <p className="section-number">01 / CATALOG</p>
-            <h2>Find the exact pressing</h2>
-            <SectionDoodle variant="search" />
+            <p className="section-number">STEP 1</p>
+            <h2>Choose a Discogs release</h2>
           </div>
-          <p>
-            Search artist, album, catalog number, barcode, or paste a Discogs release
-            URL.
+          <p id="catalog-help">
+            Search by artist, album, catalog number, barcode, or release URL.
           </p>
         </div>
 
         <div className="search-panel">
-          <form onSubmit={runSearch} className="search-form">
+          <form
+            onSubmit={runSearch}
+            className="search-form"
+            aria-busy={searchState === "searching"}
+          >
             <label htmlFor="release-search">Discogs release search</label>
             <div className="search-row">
               <input
@@ -623,6 +616,8 @@ export default function FlaggerApp() {
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="e.g. Miles Davis Kind of Blue 88697680571"
                 autoComplete="off"
+                aria-describedby="catalog-help"
+                required
               />
               <button
                 className="primary-button"
@@ -637,11 +632,12 @@ export default function FlaggerApp() {
             className="text-button"
             onClick={() => setShowToken((current) => !current)}
             aria-expanded={showToken}
+            aria-controls="discogs-token-panel"
           >
             {showToken ? "Hide" : "Use"} a personal Discogs token
           </button>
           {showToken ? (
-            <div className="token-row">
+            <div className="token-row" id="discogs-token-panel">
               <div>
                 <label htmlFor="discogs-token">Personal token (kept in memory only)</label>
                 <p>Useful if anonymous search is rate-limited. It is never saved.</p>
@@ -664,7 +660,10 @@ export default function FlaggerApp() {
             </div>
           ) : null}
           {searchMessage ? (
-            <p className={`status-message ${searchState}`} role="status">
+            <p
+              className={`status-message ${searchState}`}
+              role={searchState === "error" ? "alert" : "status"}
+            >
               {searchMessage}
             </p>
           ) : null}
@@ -717,18 +716,10 @@ export default function FlaggerApp() {
                         {result.label?.[0] ?? "Unknown label"} · {result.catno || "No cat#"}
                       </small>
                       <b>
-                        {loadingReleaseId === result.id ? "Loading…" : "Use this pressing →"}
+                        {loadingReleaseId === result.id ? "Loading…" : "Select"}
                       </b>
                     </span>
                   </button>
-                  <a
-                    className="discogs-credit"
-                    href={discogsResultUrl(result)}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Data provided by Discogs ↗
-                  </a>
                 </article>
               );
             })}
@@ -754,7 +745,7 @@ export default function FlaggerApp() {
               ) : null}
             </div>
             <div className="selected-copy">
-              <p className="selected-kicker">SELECTED PRESSING · #{release.id}</p>
+              <p className="selected-kicker">Selected release #{release.id}</p>
               <h3>{albumEdits.album}</h3>
               <p className="selected-artist">{albumEdits.artist}</p>
               <div className="release-facts">
@@ -764,8 +755,8 @@ export default function FlaggerApp() {
                 <span>{albumEdits.catalogNumber || "No catalog #"}</span>
               </div>
               <p className="selected-note">
-                {releaseTracks.length} tracks · Discogs art is shown only as a reference.
-                Upload your own cover in step 02.
+                {releaseTracks.length} tracks · Cover preview only. Add your own cover
+                below.
               </p>
               <a
                 className="discogs-credit"
@@ -773,7 +764,7 @@ export default function FlaggerApp() {
                 target="_blank"
                 rel="noreferrer"
               >
-                Data provided by Discogs ↗
+                View on Discogs ↗
               </a>
             </div>
             <button
@@ -794,18 +785,17 @@ export default function FlaggerApp() {
       <section className="workspace-section files-section" id="files">
         <div className="section-heading">
           <div className="heading-title">
-            <p className="section-number">02 / LOCAL FILES</p>
-            <h2>Add your FLACs + cover</h2>
-            <SectionDoodle variant="files" />
+            <p className="section-number">STEP 2</p>
+            <h2 id="files-heading" tabIndex={-1}>Add files and cover</h2>
           </div>
-          <p>Your files are opened locally. Nothing here is sent to Flagger or Discogs.</p>
+          <p>Your FLAC and cover files stay in this browser.</p>
         </div>
 
         <div className="upload-grid">
-          <div className="upload-card">
+          <div className="upload-card" aria-busy={isReadingFiles}>
             <div className="card-label-row">
-              <span className="card-label">AUDIO FILES</span>
-              <span>{localFiles.length ? `${localFiles.length} selected` : "Native .flac"}</span>
+              <span className="card-label">FLAC files</span>
+              <span>{localFiles.length ? `${localFiles.length} selected` : ".flac only"}</span>
             </div>
             <div
               className="drop-zone"
@@ -815,7 +805,7 @@ export default function FlaggerApp() {
               <div className="drop-icon" aria-hidden="true">
                 FLAC
               </div>
-              <h3>Drop your album tracks here</h3>
+              <h3>Drop FLAC files here</h3>
               <p>Natural filename order is used first. You can rearrange every track.</p>
               <button
                 type="button"
@@ -838,7 +828,7 @@ export default function FlaggerApp() {
 
           <div className="upload-card cover-upload-card">
             <div className="card-label-row">
-              <span className="card-label">YOUR COVER</span>
+              <span className="card-label">Cover image</span>
               <span>Required · JPEG / PNG</span>
             </div>
             {cover ? (
@@ -846,9 +836,9 @@ export default function FlaggerApp() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={cover.previewUrl} alt="Your cover ready to embed" />
                 <div>
-                  <span className="success-chip">READY TO EMBED</span>
+                  <span className="success-chip">Ready</span>
                   <h3>{cover.width} × {cover.height} JPEG</h3>
-                  <p>Optimized for portable players and baked into every track.</p>
+                  <p>Converted to JPEG and embedded in every track.</p>
                   <button
                     type="button"
                     className="text-button"
@@ -864,7 +854,7 @@ export default function FlaggerApp() {
                   <span>+</span>
                 </div>
                 <div>
-                  <h3>Add your sleeve scan</h3>
+                  <h3>Choose a cover image</h3>
                   <p>
                     Use artwork you own or have permission to use. Flagger converts it
                     to a DAP-friendly JPEG.
@@ -887,7 +877,7 @@ export default function FlaggerApp() {
               onChange={onCoverInput}
               className="visually-hidden"
             />
-            {coverError ? <p className="status-message error">{coverError}</p> : null}
+            {coverError ? <p className="status-message error" role="alert">{coverError}</p> : null}
           </div>
         </div>
 
@@ -966,38 +956,31 @@ export default function FlaggerApp() {
       <section className="workspace-section match-section" id="match">
         <div className="section-heading">
           <div className="heading-title">
-            <p className="section-number">03 / TAG + EXPORT</p>
-            <h2>Match the tracks</h2>
-            <SectionDoodle variant="match" />
+            <p className="section-number">STEP 3</p>
+            <h2>Review and export</h2>
           </div>
-          <p>Confirm the order, make any corrections, then prepare the finished album.</p>
+          <p>Check album metadata and track assignments before creating the files.</p>
         </div>
 
         {!release || !readyFiles.length ? (
           <div className="locked-panel">
             <span aria-hidden="true">03</span>
             <div>
-              <h3>This step unlocks when the pressing and FLACs are ready.</h3>
-              <p>Select a Discogs release above, then add at least one valid file.</p>
+              <h3>Select a release and add at least one valid FLAC to continue.</h3>
             </div>
           </div>
         ) : (
           <>
-            <div className="metadata-editor">
-              <div className="editor-heading">
-                <div>
-                  <span className="card-label">ALBUM TAGS</span>
-                  <h3>Clean up the shared metadata</h3>
-                </div>
-                <div className="panel-actions">
-                  <a
-                    className="discogs-credit panel-credit"
-                    href={discogsReleaseUrl(release)}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Data provided by Discogs ↗
-                  </a>
+            <details className="metadata-editor">
+              <summary>
+                <span>
+                  <strong>Album metadata</strong>
+                  <small>Optional: review or edit values from Discogs</small>
+                </span>
+                <span className="summary-action">Edit</span>
+              </summary>
+              <div className="metadata-editor-body">
+                <div className="editor-heading">
                   <button
                     type="button"
                     className="quiet-button"
@@ -1010,77 +993,69 @@ export default function FlaggerApp() {
                     Reset from Discogs
                   </button>
                 </div>
+                <div className="field-grid">
+                  <label>
+                    Album artist
+                    <input
+                      value={albumEdits.artist}
+                      onChange={(event) => updateAlbumField("artist", event.target.value)}
+                    />
+                  </label>
+                  <label className="field-wide">
+                    Album title
+                    <input
+                      value={albumEdits.album}
+                      onChange={(event) => updateAlbumField("album", event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Year
+                    <input
+                      value={albumEdits.year}
+                      inputMode="numeric"
+                      onChange={(event) => updateAlbumField("year", event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Label
+                    <input
+                      value={albumEdits.label}
+                      onChange={(event) => updateAlbumField("label", event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Catalog number
+                    <input
+                      value={albumEdits.catalogNumber}
+                      onChange={(event) => updateAlbumField("catalogNumber", event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Country
+                    <input
+                      value={albumEdits.country}
+                      onChange={(event) => updateAlbumField("country", event.target.value)}
+                    />
+                  </label>
+                  <label className="field-wide">
+                    Genres / styles
+                    <input
+                      value={albumEdits.genres}
+                      onChange={(event) => updateAlbumField("genres", event.target.value)}
+                      placeholder="Jazz; Modal; Cool Jazz"
+                    />
+                  </label>
+                </div>
               </div>
-              <div className="field-grid">
-                <label>
-                  Album artist
-                  <input
-                    value={albumEdits.artist}
-                    onChange={(event) => updateAlbumField("artist", event.target.value)}
-                  />
-                </label>
-                <label className="field-wide">
-                  Album title
-                  <input
-                    value={albumEdits.album}
-                    onChange={(event) => updateAlbumField("album", event.target.value)}
-                  />
-                </label>
-                <label>
-                  Year
-                  <input
-                    value={albumEdits.year}
-                    inputMode="numeric"
-                    onChange={(event) => updateAlbumField("year", event.target.value)}
-                  />
-                </label>
-                <label>
-                  Label
-                  <input
-                    value={albumEdits.label}
-                    onChange={(event) => updateAlbumField("label", event.target.value)}
-                  />
-                </label>
-                <label>
-                  Catalog number
-                  <input
-                    value={albumEdits.catalogNumber}
-                    onChange={(event) => updateAlbumField("catalogNumber", event.target.value)}
-                  />
-                </label>
-                <label>
-                  Country
-                  <input
-                    value={albumEdits.country}
-                    onChange={(event) => updateAlbumField("country", event.target.value)}
-                  />
-                </label>
-                <label className="field-wide">
-                  Genres / styles
-                  <input
-                    value={albumEdits.genres}
-                    onChange={(event) => updateAlbumField("genres", event.target.value)}
-                    placeholder="Jazz; Modal; Cool Jazz"
-                  />
-                </label>
-              </div>
-            </div>
+            </details>
 
             <div className="mapping-panel">
               <div className="mapping-toolbar">
                 <div>
-                  <span className="card-label">TRACK MAP</span>
+                  <span className="card-label">Track assignments</span>
                   <p>{readyFiles.length} files ↔ {releaseTracks.length} release tracks</p>
                 </div>
                 <div className="panel-actions">
-                  <a
-                    className="discogs-credit panel-credit"
-                    href={discogsReleaseUrl(release)}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Data provided by Discogs ↗
-                  </a>
                   <button
                     type="button"
                     className="quiet-button"
@@ -1097,17 +1072,22 @@ export default function FlaggerApp() {
                 </div>
               </div>
               <div className="mapping-list">
-                {readyFiles.map((item) => {
+                {readyFiles.map((item, itemIndex) => {
                   const track =
                     item.assignment === null ? null : releaseTracks[item.assignment];
                   return (
-                    <div className="mapping-row" key={item.id}>
+                    <div
+                      className="mapping-row"
+                      key={item.id}
+                      role="group"
+                      aria-labelledby={`mapping-file-${itemIndex}`}
+                    >
                       <div className="source-file">
-                        <span>LOCAL FLAC</span>
-                        <strong>{item.file.name}</strong>
+                        <span>File</span>
+                        <strong id={`mapping-file-${itemIndex}`}>{item.file.name}</strong>
                         <small>{formatDuration(item.durationSeconds)}</small>
                       </div>
-                      <PatchCableArrow />
+                      <span className="mapping-arrow" aria-hidden="true">→</span>
                       <label className="track-select">
                         Discogs track
                         <select
@@ -1146,7 +1126,7 @@ export default function FlaggerApp() {
                 })}
               </div>
               {!assignmentsUnique ? (
-                <p className="status-message error">
+                <p className="status-message error" role="alert">
                   Each local file must map to a different Discogs track.
                 </p>
               ) : null}
@@ -1154,17 +1134,20 @@ export default function FlaggerApp() {
 
             <div className="export-panel">
               <div className="export-copy">
-                <p className="section-number">FINAL CHECK</p>
-                <h3>Ready for your Walkman, FiiO, or SnowSky.</h3>
-                <ul>
-                  <li className={release ? "done" : ""}>Discogs pressing selected</li>
+                <h3>Prepare tagged files</h3>
+                <ul id="export-readiness">
+                  <li className={release ? "done" : ""}>
+                    <span>{release ? "Complete" : "Missing"}</span> Release selected
+                  </li>
                   <li className={assignmentsComplete && assignmentsUnique ? "done" : ""}>
+                    <span>{assignmentsComplete && assignmentsUnique ? "Complete" : "Missing"}</span>{" "}
                     Every FLAC matched once
                   </li>
-                  <li className={cover ? "done" : ""}>Your cover ready to embed</li>
-                  <li className="done">DAP-safe filenames + ordered album ZIP</li>
-                  <li className="done">Audio frames will remain byte-for-byte intact</li>
+                  <li className={cover ? "done" : ""}>
+                    <span>{cover ? "Complete" : "Missing"}</span> Cover image added
+                  </li>
                 </ul>
+                <p className="export-note">DAP-safe filenames · Audio is not re-encoded</p>
               </div>
               <div className="export-action">
                 <div className="export-count">
@@ -1176,6 +1159,7 @@ export default function FlaggerApp() {
                   className="primary-button export-button"
                   disabled={!canExport}
                   onClick={() => void prepareTaggedFiles()}
+                  aria-describedby="export-readiness"
                 >
                   {exportState === "working" ? "Tagging files…" : "Prepare tagged FLACs"}
                 </button>
@@ -1186,7 +1170,10 @@ export default function FlaggerApp() {
         )}
 
         {exportMessage ? (
-          <p className={`status-message export-status ${exportState}`} role="status">
+          <p
+            className={`status-message export-status ${exportState}`}
+            role={exportState === "error" ? "alert" : "status"}
+          >
             {exportMessage}
           </p>
         ) : null}
@@ -1195,8 +1182,8 @@ export default function FlaggerApp() {
           <div className="download-panel">
             <div className="download-heading">
               <div>
-                <span className="success-chip">ALBUM READY</span>
-                <h3>Download your finished FLACs</h3>
+                <span className="success-chip">Ready</span>
+                <h3>Download tagged files</h3>
                 <p>
                   SnowSky tip: extract the album ZIP directly into a new empty folder on
                   the SD card; File view may follow copy order.
@@ -1234,23 +1221,13 @@ export default function FlaggerApp() {
       </section>
 
       <section className="privacy-strip">
-        <div className="privacy-record" aria-hidden="true"><span /></div>
-        <div>
-          <p className="section-number">LOCAL BY DESIGN</p>
-          <h2>Your masters do not need a cloud.</h2>
-        </div>
         <p>
-          Flagger reads only the metadata area of each FLAC and joins the untouched audio
-          to new tags in your browser. Discogs receives catalog searches—not music files,
-          cover uploads, or listening data.
+          <strong>Privacy:</strong> FLAC and cover files stay in your browser. Only catalog
+          searches and release requests are sent to Discogs.
         </p>
       </section>
 
       <footer>
-        <div className="brand footer-brand">
-          <span className="brand-mark" aria-hidden="true">F</span>
-          <span><strong>Flagger</strong><small>FLAC + TAGGER</small></span>
-        </div>
         <p>
           This application uses Discogs’ API but is not affiliated with, sponsored or
           endorsed by Discogs. “Discogs” is a trademark of Zink Media, LLC.
@@ -1258,169 +1235,6 @@ export default function FlaggerApp() {
         <a href="#top">Back to top ↑</a>
       </footer>
     </main>
-  );
-}
-
-function ScribbleUnderline() {
-  return (
-    <svg
-      className="hand-doodle hero-underline"
-      viewBox="0 0 620 44"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        className="doodle-path"
-        pathLength={1}
-        d="M7 23 C86 8 155 33 235 19 C328 3 421 32 613 12"
-      />
-      <path
-        className="doodle-path doodle-echo"
-        pathLength={1}
-        d="M18 32 C116 20 178 38 265 27 C370 14 457 34 596 22"
-      />
-    </svg>
-  );
-}
-
-function RecordOrbitDoodle() {
-  return (
-    <svg
-      className="hand-doodle record-orbit-doodle"
-      viewBox="0 0 520 520"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        className="doodle-path"
-        pathLength={1}
-        d="M75 370 C18 279 45 139 151 72 C254 8 401 54 463 169 C521 276 472 414 359 467 C257 515 132 463 75 370 Z"
-      />
-      <path
-        className="doodle-path doodle-accent doodle-delay"
-        pathLength={1}
-        d="M31 192 C22 176 24 153 38 140 M24 153 L10 149 M25 153 L32 137 M449 429 C464 435 482 431 493 418 M480 430 L495 439 M480 430 L484 413"
-      />
-      <path
-        className="doodle-path doodle-delay-two"
-        pathLength={1}
-        d="M457 76 L465 55 L474 76 L496 84 L475 92 L467 114 L458 94 L437 85 Z"
-      />
-    </svg>
-  );
-}
-
-function WaveformDivider() {
-  return (
-    <div className="waveform-divider">
-      <svg
-        className="hand-doodle"
-        viewBox="0 0 1440 80"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <path
-          className="doodle-path"
-          pathLength={1}
-          d="M0 44 C45 42 62 42 98 43 L132 43 L146 21 L160 66 L176 33 L193 53 L215 42 C267 40 308 43 355 43 L391 43 L405 9 L421 71 L438 26 L455 57 L476 43 C535 40 578 44 628 43 L665 43 L681 18 L697 64 L714 30 L731 55 L753 43 C812 40 856 44 910 43 L944 43 L959 11 L976 72 L994 27 L1011 58 L1032 43 C1092 40 1138 44 1190 43 L1226 43 L1241 22 L1257 64 L1273 33 L1290 53 L1312 43 C1358 41 1397 43 1440 42"
-        />
-        <path
-          className="doodle-path doodle-echo doodle-delay"
-          pathLength={1}
-          d="M0 51 C179 54 314 50 480 52 C641 54 802 49 978 52 C1130 55 1288 50 1440 52"
-        />
-      </svg>
-      <span>ANALOG IN · CLEAN TAGS OUT · AUDIO UNTOUCHED</span>
-    </div>
-  );
-}
-
-function SectionDoodle({ variant }: { variant: "search" | "files" | "match" }) {
-  if (variant === "search") {
-    return (
-      <svg
-        className="hand-doodle section-doodle"
-        viewBox="0 0 132 92"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <path
-          className="doodle-path"
-          pathLength={1}
-          d="M18 38 C17 17 38 7 56 13 C76 20 80 43 67 57 C53 72 27 62 19 45 C12 30 23 15 38 11"
-        />
-        <path
-          className="doodle-path doodle-delay"
-          pathLength={1}
-          d="M66 57 C80 66 92 75 106 84 M95 75 L108 84 L103 69"
-        />
-      </svg>
-    );
-  }
-  if (variant === "files") {
-    return (
-      <svg
-        className="hand-doodle section-doodle"
-        viewBox="0 0 132 92"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <path
-          className="doodle-path"
-          pathLength={1}
-          d="M20 25 C43 19 69 20 93 23 L96 67 C68 71 45 68 18 71 Z M27 17 C48 12 76 14 103 18 L105 58"
-        />
-        <path
-          className="doodle-path doodle-accent doodle-delay"
-          pathLength={1}
-          d="M31 48 C39 47 40 34 47 34 C55 35 54 58 62 57 C70 56 70 38 78 39 C84 40 86 50 94 49"
-        />
-      </svg>
-    );
-  }
-  return (
-    <svg
-      className="hand-doodle section-doodle"
-      viewBox="0 0 132 92"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        className="doodle-path"
-        pathLength={1}
-        d="M14 48 C28 49 37 48 48 49 M84 49 C96 49 106 49 119 47 M47 35 L63 50 L84 27 M48 39 L63 55 L87 31"
-      />
-      <path
-        className="doodle-path doodle-accent doodle-delay"
-        pathLength={1}
-        d="M24 27 L28 16 M17 31 L8 24 M101 67 L109 77 M108 62 L122 64"
-      />
-    </svg>
-  );
-}
-
-function PatchCableArrow() {
-  return (
-    <svg
-      className="hand-doodle mapping-arrow patch-cable"
-      viewBox="0 0 66 30"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <circle className="doodle-path" pathLength={1} cx="7" cy="15" r="4" />
-      <path
-        className="doodle-path doodle-accent doodle-delay"
-        pathLength={1}
-        d="M11 15 C22 2 37 28 51 14 C55 10 58 11 61 14"
-      />
-      <path
-        className="doodle-path doodle-delay-two"
-        pathLength={1}
-        d="M54 8 L62 14 L54 21"
-      />
-    </svg>
   );
 }
 
@@ -1635,11 +1449,6 @@ function triggerDownload(blob: Blob, name: string) {
   anchor.click();
   anchor.remove();
   window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
-}
-
-function discogsResultUrl(result: DiscogsSearchResult): string {
-  if (result.uri?.startsWith("/")) return `https://www.discogs.com${result.uri}`;
-  return `https://www.discogs.com/release/${result.id}`;
 }
 
 function discogsReleaseUrl(release: DiscogsRelease): string {
