@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { dapOrderingTags } from "../lib/dap.ts";
 import { inspectFlac, rewriteFlac } from "../lib/flac.ts";
 
 const SAMPLE_RATE = 96_000;
@@ -97,4 +98,28 @@ test("preserves unrelated comments while replacing owned tag fields", async () =
   assert.deepEqual(parsed.comments.TITLE, ["New title"]);
   assert.deepEqual(parsed.comments.MUSICBRAINZ_ALBUMID, ["release-123"]);
   assert.deepEqual(parsed.comments.REPLAYGAIN_ALBUM_GAIN, ["-4.20 dB"]);
+});
+
+test("removes stale single-disc tags while keeping a zero-padded track number", async () => {
+  const source = nativeFlac(new Uint8Array([0xff, 0xf8, 0x33, 0x44]));
+  const firstPass = await rewriteFlac(source, {
+    TRACKNUMBER: 1,
+    DISCNUMBER: 1,
+    DISCTOTAL: 1,
+    TOTALDISCS: 1,
+    DISK: 1,
+  });
+  const secondPass = await rewriteFlac(
+    firstPass,
+    dapOrderingTags({ discNumber: 1, discTotal: 1, trackNumber: 1, trackTotal: 12 }),
+  );
+  const parsed = await inspectFlac(secondPass);
+
+  assert.deepEqual(parsed.comments.TRACKNUMBER, ["01"]);
+  assert.deepEqual(parsed.comments.TRACKTOTAL, ["12"]);
+  assert.deepEqual(parsed.comments.TOTALTRACKS, ["12"]);
+  assert.equal(parsed.comments.DISCNUMBER, undefined);
+  assert.equal(parsed.comments.DISCTOTAL, undefined);
+  assert.equal(parsed.comments.TOTALDISCS, undefined);
+  assert.equal(parsed.comments.DISK, undefined);
 });

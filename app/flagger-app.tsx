@@ -15,6 +15,7 @@ import {
   type FlacPicture,
   type FlacTags,
 } from "@/lib/flac";
+import { compareDapOrder, dapOrderingTags, dapOutputFileName } from "@/lib/dap";
 import { createStoredZip } from "@/lib/zip";
 
 type DiscogsArtist = {
@@ -114,6 +115,8 @@ type TaggedOutput = {
   name: string;
   blob: Blob;
   title: string;
+  discNumber: number;
+  trackNumber: number;
 };
 
 const EMPTY_ALBUM: AlbumEdits = {
@@ -455,6 +458,12 @@ export default function FlaggerApp() {
           item.assignment === null ? null : releaseTracks[item.assignment];
         if (!track) continue;
         const title = (item.titleOverride ?? track.title).trim() || track.title;
+        const order = {
+          discNumber: track.discNumber,
+          discTotal,
+          trackNumber: track.trackNumber,
+          trackTotal: track.trackTotal,
+        };
         const tags: FlacTags = {
           TITLE: title,
           ARTIST: track.artist || albumEdits.artist,
@@ -462,10 +471,7 @@ export default function FlaggerApp() {
           ALBUMARTIST: albumEdits.artist,
           DATE: albumEdits.year,
           GENRE: splitGenres(albumEdits.genres),
-          TRACKNUMBER: track.trackNumber,
-          TRACKTOTAL: track.trackTotal,
-          DISCNUMBER: track.discNumber,
-          DISCTOTAL: discTotal,
+          ...dapOrderingTags(order),
           VINYLTRACK: track.position,
           LABEL: albumEdits.label,
           CATALOGNUMBER: albumEdits.catalogNumber,
@@ -480,15 +486,18 @@ export default function FlaggerApp() {
         const blob = await rewriteFlac(item.file, tags, picture);
         nextOutputs.push({
           id: item.id,
-          name: outputFileName(track, title, discTotal),
+          name: dapOutputFileName(order, title),
           blob,
           title,
+          discNumber: track.discNumber,
+          trackNumber: track.trackNumber,
         });
       }
+      nextOutputs.sort(compareDapOrder);
       setOutputs(nextOutputs);
       setExportState("ready");
       setExportMessage(
-        `${nextOutputs.length} tagged FLAC${nextOutputs.length === 1 ? " is" : "s are"} ready. Audio frames were left untouched.`,
+        `${nextOutputs.length} tagged FLAC${nextOutputs.length === 1 ? " is" : "s are"} ready in disc and track order. Audio frames were left untouched.`,
       );
     } catch (error) {
       setExportState("error");
@@ -1153,6 +1162,7 @@ export default function FlaggerApp() {
                     Every FLAC matched once
                   </li>
                   <li className={cover ? "done" : ""}>Your cover ready to embed</li>
+                  <li className="done">DAP-safe filenames + ordered album ZIP</li>
                   <li className="done">Audio frames will remain byte-for-byte intact</li>
                 </ul>
               </div>
@@ -1187,7 +1197,10 @@ export default function FlaggerApp() {
               <div>
                 <span className="success-chip">ALBUM READY</span>
                 <h3>Download your finished FLACs</h3>
-                <p>Save each file or ask your browser to download the full set.</p>
+                <p>
+                  SnowSky tip: extract the album ZIP directly into a new empty folder on
+                  the SD card; File view may follow copy order.
+                </p>
               </div>
               <button
                 type="button"
@@ -1601,17 +1614,6 @@ function formatAudioSpec(sampleRate?: number, bitsPerSample?: number): string {
 function formatBytes(bytes: number): string {
   if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(bytes > 100 * 1024 * 1024 ? 0 : 1)} MB`;
-}
-
-function outputFileName(track: ReleaseTrack, title: string, discTotal: number): string {
-  const prefix = `${discTotal > 1 ? `${track.discNumber}-` : ""}${String(track.trackNumber).padStart(2, "0")}`;
-  const safeTitle = title
-    .normalize("NFKC")
-    .replace(/[\\/:*?"<>|]/g, "-")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 140);
-  return `${prefix} - ${safeTitle || "Untitled"}.flac`;
 }
 
 function safeFilePart(value: string): string {

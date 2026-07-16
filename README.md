@@ -34,6 +34,12 @@ and the store-only album ZIP writer.
 
 Album ZIPs use the store method because FLAC audio is already compressed.
 
+For DAP compatibility, exported filenames and track tags are zero-padded, ZIP
+entries are written in disc/track order, and single-disc albums omit disc-number
+tags that can confuse SnowSky Echo firmware. On players whose File view follows
+FAT creation order, extract the album ZIP directly into a new empty folder on
+the SD card.
+
 ## Privacy and Discogs
 
 - FLAC files and uploaded cover artwork stay in the browser.
